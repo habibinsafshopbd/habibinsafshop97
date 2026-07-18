@@ -38,8 +38,8 @@ header{
 }
 
 .logo{
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
 }
 
 h2{
@@ -150,58 +150,6 @@ p{
     margin-top: 30px;
     padding: 50px 20px;
     background: url("islamic-calligraphy-wallpaper-poster-kate-naskh-kalma-vactor-design-colored-tughra-round-shape-ornamental-background-58368178.jpg") center/cover no-repeat;
-    text-align: center;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.islamic-banner h2{
-    font-size: 60px;
-    color: gold;
-    text-shadow: 2px 2px 8px black;
-}
-
-.islamic-banner p{
-    color: yellow;
-    font-size: 20px;
-    font-weight: bold;
-    text-shadow: 2px 2px 6px black;
-}}
-
-.menu a{
-    display: block;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: black;
-    font-size: 18px;
-    border-bottom: 1px solid #ddd;
-}
-
-.menu a:last-child{
-    border-bottom: none;
-}
-
-.menu a:hover{
-    background: #f2f2f2;
-}
-
-.product-card{
-    background: white;
-    margin: 15px;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.product-card h3{
-    margin-top: 0;
-    color: #007BFF;
-}
-
-.islamic-banner{
-    margin-top: 30px;
-    padding: 50px 20px;
-    background: url("islamic-calligraphy-wallpaper-poster-kate-naskh-kalma-vactor-design-colored-tughra-round-shape-ornamental-background-58368178.jpg") center/95% no-repeat;
     text-align: center;
     border-radius: 10px;
     overflow: hidden;
