@@ -39,7 +39,7 @@ header{
 
 .logo{
     width: 70px;
-    height: 70px;
+    height: auto;
 }
 
 h2{
