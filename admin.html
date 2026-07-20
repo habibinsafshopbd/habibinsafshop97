@@ -64,11 +64,50 @@ button{
 <button onclick="login()">Login</button>
 
 </div>
+<script type="module">
 
-<script>
-function login(){
-alert("এখানে Firebase Authentication যুক্ত করতে হবে।");
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+  authDomain: "habib-insaf-shop.firebaseapp.com",
+  projectId: "habib-insaf-shop",
+  storageBucket: "habib-insaf-shop.firebasestorage.app",
+  messagingSenderId: "1061560355803",
+  appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe",
+  measurementId: "G-VVVSR338FN"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.login = function () {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+
+      alert("লগইন সফল");
+
+      window.location.href = "dashboard.html";
+
+    })
+
+    .catch((error) => {
+
+      alert("ইমেইল অথবা পাসওয়ার্ড ভুল");
+
+    });
+
 }
+
 </script>
 
 </body>
