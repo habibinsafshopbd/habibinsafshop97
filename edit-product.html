@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>পণ্য সম্পাদনা</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+padding:20px;
+}
+
+.box{
+max-width:450px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+h2{
+text-align:center;
+color:#006B3C;
+}
+
+select,
+input,
+textarea,
+button{
+width:100%;
+padding:12px;
+margin:10px 0;
+box-sizing:border-box;
+}
+
+button{
+background:#006B3C;
+color:#fff;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+<h2>✏️ পণ্য সম্পাদনা</h2>
+
+<select id="productList">
+<option value="">পণ্য নির্বাচন করুন</option>
+</select>
+
+<input type="text" id="name" placeholder="পণ্যের নাম">
+
+<input type="number" id="regularPrice" placeholder="রেগুলার দাম">
+
+<input type="number" id="offerPrice" placeholder="অফার দাম">
+
+<textarea id="description" rows="4" placeholder="পণ্যের বিবরণ"></textarea>
+
+<input type="text" id="image" placeholder="ছবির Direct Link">
+
+<button onclick="updateProduct()">💾 Update</button>
+
+</div>
