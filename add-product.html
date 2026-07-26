@@ -75,7 +75,15 @@ button{
 <button type="button">➕ ক্যাটাগরি যোগ করুন</button>
 
 <input type="text" id="image" placeholder="ছবির Direct Link পেস্ট করুন">
+<label>সাইজ</label>
+<input type="text" id="sizeInput" placeholder="সাইজ লিখুন">
+<button type="button" onclick="addSize()">➕ সাইজ যোগ করুন</button>
+<div id="sizeList"></div>
 
+<label>রং</label>
+<input type="text" id="colorInput" placeholder="রং লিখুন">
+<button type="button" onclick="addColor()">➕ রং যোগ করুন</button>
+<div id="colorList"></div>
 <button type="button" onclick="addProduct()">📦 পণ্য যোগ করুন</button>
 
 </div>
@@ -98,6 +106,24 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+let sizes = [];
+let colors = [];
+
+window.addSize = function () {
+  const value = document.getElementById("sizeInput").value;
+  if (!value) return;
+  sizes.push(value);
+  document.getElementById("sizeList").innerHTML = sizes.join(", ");
+  document.getElementById("sizeInput").value = "";
+}
+
+window.addColor = function () {
+  const value = document.getElementById("colorInput").value;
+  if (!value) return;
+  colors.push(value);
+  document.getElementById("colorList").innerHTML = colors.join(", ");
+  document.getElementById("colorInput").value = "";
+}
 
 window.addProduct = async function () {
 
@@ -107,6 +133,212 @@ const offerPrice = document.getElementById("offerPrice").value;
 const description = document.getElementById("description").value;
 const category = document.getElementById("category").value;
 const image = document.getElementById("image").value;
+
+if (!name || !regularPrice || !category || !image) {
+    alert("পণ্যের নাম, রেগুলার দাম, ক্যাটাগরি ও ছবির লিংক অবশ্যই দিতে হবে");
+    return;
+}
+
+await addDoc(collection(db, "products"), {
+    name: name,
+    regularPrice: regularPrice,
+    offerPrice: offerPrice,
+    description: description,
+    category: category,
+    image: image,
+    sizes: sizes,
+    colors: colors
+});
+
+alert("পণ্য সফলভাবে যোগ হয়েছে");
+
+document.getElementById("name").value = "";
+document.getElementById("regularPrice").value = "";
+document.getElementById("offerPrice").value = "";
+document.getElementById("description").value = "";
+document.getElementById("category").value = "";
+document.getElementById("image").value = "";
+
+sizes = [];
+colors = [];
+
+document.getElementById("sizeList").innerHTML = "";
+document.getElementById("colorList").innerHTML = "";
+
+}
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>নতুন পণ্য যোগ করুন</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+    padding:20px;
+}
+
+.box{
+    max-width:450px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+h2{
+    text-align:center;
+    color:#006B3C;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#006B3C;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>➕ নতুন পণ্য যোগ করুন</h2>
+
+<input type="text" id="name" placeholder="পণ্যের নাম">
+
+<input type="number" id="regularPrice" placeholder="রেগুলার দাম">
+
+<input type="number" id="offerPrice" placeholder="অফার দাম">
+
+<textarea id="description" placeholder="পণ্যের বিবরণ লিখুন" rows="4"></textarea>
+
+<select id="category">
+    <option value="">ক্যাটাগরি নির্বাচন করুন</option>
+    <option value="tupi">টুপি</option>
+    <option value="honey">মধু</option>
+    <option value="attar">আতার</option>
+</select>
+
+<input type="text" id="newCategory" placeholder="নতুন ক্যাটাগরি যোগ করুন">
+
+<button type="button">➕ ক্যাটাগরি যোগ করুন</button>
+
+<input type="text" id="image" placeholder="ছবির Direct Link পেস্ট করুন">
+<label>সাইজ</label>
+<input type="text" id="sizeInput" placeholder="সাইজ লিখুন">
+<button type="button" onclick="addSize()">➕ সাইজ যোগ করুন</button>
+<div id="sizeList"></div>
+
+<label>রং</label>
+<input type="text" id="colorInput" placeholder="রং লিখুন">
+<button type="button" onclick="addColor()">➕ রং যোগ করুন</button>
+<div id="colorList"></div>
+<button type="button" onclick="addProduct()">📦 পণ্য যোগ করুন</button>
+
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+  authDomain: "habib-insaf-shop.firebaseapp.com",
+  projectId: "habib-insaf-shop",
+  storageBucket: "habib-insaf-shop.firebasestorage.app",
+  messagingSenderId: "1061560355803",
+  appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+let sizes = [];
+let colors = [];
+
+window.addSize = function () {
+  const value = document.getElementById("sizeInput").value;
+  if (!value) return;
+  sizes.push(value);
+  document.getElementById("sizeList").innerHTML = sizes.join(", ");
+  document.getElementById("sizeInput").value = "";
+}
+
+window.addColor = function () {
+  const value = document.getElementById("colorInput").value;
+  if (!value) return;
+  colors.push(value);
+  document.getElementById("colorList").innerHTML = colors.join(", ");
+  document.getElementById("colorInput").value = "";
+}
+
+window.addProduct = async function () {
+
+const name = document.getElementById("name").value;
+const regularPrice = document.getElementById("regularPrice").value;
+const offerPrice = document.getElementById("offerPrice").value;
+const description = document.getElementById("description").value;
+const category = document.getElementById("category").value;
+const image = document.getElementById("image").value;
+
+if (!name || !regularPrice || !category || !image) {
+    alert("পণ্যের নাম, রেগুলার দাম, ক্যাটাগরি ও ছবির লিংক অবশ্যই দিতে হবে");
+    return;
+}
+
+await addDoc(collection(db, "products"), {
+    name: name,
+    regularPrice: regularPrice,
+    offerPrice: offerPrice,
+    description: description,
+    category: category,
+    image: image,
+    sizes: sizes,
+    colors: colors
+});
+
+alert("পণ্য সফলভাবে যোগ হয়েছে");
+
+document.getElementById("name").value = "";
+document.getElementById("regularPrice").value = "";
+document.getElementById("offerPrice").value = "";
+document.getElementById("description").value = "";
+document.getElementById("category").value = "";
+document.getElementById("image").value = "";
+
+sizes = [];
+colors = [];
+
+document.getElementById("sizeList").innerHTML = "";
+document.getElementById("colorList").innerHTML = "";
+
+}
+</script>
+</body>
+</html>const image = document.getElementById("image").value;
 
 if (!name || !regularPrice || !category || !image) {
     alert("পণ্যের নাম, রেগুলার দাম, ক্যাটাগরি ও ছবির লিংক অবশ্যই দিতে হবে");
