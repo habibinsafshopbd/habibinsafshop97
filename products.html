@@ -50,6 +50,54 @@ function filterProducts(category){
 
 }
 </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+  authDomain: "habib-insaf-shop.firebaseapp.com",
+  projectId: "habib-insaf-shop",
+  storageBucket: "habib-insaf-shop.firebasestorage.app",
+  messagingSenderId: "1061560355803",
+  appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const productsDiv = document.getElementById("products");
+
+async function loadProducts() {
+
+  const querySnapshot = await getDocs(collection(db, "products"));
+
+  querySnapshot.forEach((doc) => {
+
+    const p = doc.data();
+
+    productsDiv.innerHTML += `
+      <div class="product ${p.category}">
+        <img src="${p.image}" width="150">
+        <h3>${p.name}</h3>
+
+        <p>
+          ${p.offerPrice ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>` : `৳ ${p.regularPrice}`}
+        </p>
+
+        <p>${p.description || ""}</p>
+      </div>
+    `;
+
+  });
+
+}
+
+loadProducts();
+</script>
 </body>
 </html>
