@@ -58,6 +58,59 @@ button{
 <button onclick="deleteProduct()">🗑️ Delete Product</button>
 
 </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+  authDomain: "habib-insaf-shop.firebaseapp.com",
+  projectId: "habib-insaf-shop",
+  storageBucket: "habib-insaf-shop.firebasestorage.app",
+  messagingSenderId: "1061560355803",
+  appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const select = document.getElementById("productList");
+
+async function loadProducts() {
+  const querySnapshot = await getDocs(collection(db, "products"));
+
+  querySnapshot.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = item.data().name;
+    select.appendChild(option);
+  });
+}
+
+window.deleteProduct = async function () {
+
+  if (select.value == "") {
+    alert("একটি পণ্য নির্বাচন করুন");
+    return;
+  }
+
+  if (confirm("এই পণ্যটি মুছে ফেলতে চান?")) {
+
+    await deleteDoc(doc(db, "products", select.value));
+
+    alert("পণ্য মুছে ফেলা হয়েছে");
+
+    location.reload();
+  }
+}
+
+loadProducts();
+</script>
 </body>
 </html>
