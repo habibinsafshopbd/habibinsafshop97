@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>সকল অর্ডার</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+    padding:20px;
+}
+
+h2{
+    text-align:center;
+    color:#006B3C;
+}
+
+.order{
+    background:#fff;
+    padding:15px;
+    margin:15px 0;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    color:#fff;
+    cursor:pointer;
+}
+
+.confirm{
+    background:green;
+}
+
+.delete{
+    background:red;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>📋 সকল অর্ডার</h2>
+
+<div id="orders"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+getFirestore,
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+authDomain: "habib-insaf-shop.firebaseapp.com",
+projectId: "habib-insaf-shop",
+storageBucket: "habib-insaf-shop.firebasestorage.app",
+messagingSenderId: "1061560355803",
+appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ordersDiv = document.getElementById("orders");
+
+async function loadOrders(){
+
+const querySnapshot = await getDocs(collection(db,"orders"));
+
+querySnapshot.forEach((doc)=>{
+
+const o = doc.data();
+
+ordersDiv.innerHTML += `
+<div class="order">
+<h3>${o.product}</h3>
+
+<p><b>নাম:</b> ${o.name}</p>
+
+<p><b>মোবাইল:</b> ${o.phone}</p>
+
+<p><b>ঠিকানা:</b> ${o.address}</p>
+
+<p><b>পরিমাণ:</b> ${o.qty}</p>
+
+<p><b>মন্তব্য:</b> ${o.note || ""}</p>
+
+<button class="confirm">Confirm</button>
+
+<button class="delete">Delete</button>
+
+</div>
+`;
+
+});
+
+}
+
+loadOrders();
+
+</script>
+
+</body>
+</html>
