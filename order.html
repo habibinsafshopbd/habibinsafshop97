@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>অর্ডার করুন</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+    padding:20px;
+}
+
+.box{
+    max-width:450px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+h2{
+    text-align:center;
+    color:#006B3C;
+}
+
+input,textarea{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#006B3C;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>🛒 অর্ডার করুন</h2>
+
+<input type="text" id="product" placeholder="পণ্যের নাম">
+
+<input type="text" id="name" placeholder="আপনার নাম">
+
+<input type="tel" id="phone" placeholder="মোবাইল নম্বর">
+
+<textarea id="address" placeholder="সম্পূর্ণ ঠিকানা"></textarea>
+
+<input type="number" id="qty" placeholder="পরিমাণ" value="1">
+
+<textarea id="note" placeholder="মন্তব্য (ঐচ্ছিক)"></textarea>
+
+<button onclick="orderNow()">✅ অর্ডার কনফার্ম করুন</button>
+
+</div>
+
+<script>
+function orderNow(){
+
+const product=document.getElementById("product").value;
+const name=document.getElementById("name").value;
+const phone=document.getElementById("phone").value;
+const address=document.getElementById("address").value;
+const qty=document.getElementById("qty").value;
+
+if(!product || !name || !phone || !address){
+    alert("সব তথ্য পূরণ করুন");
+    return;
+}
+
+alert("অর্ডার গ্রহণ করা হয়েছে");
+
+}
+</script>
+
+</body>
+</html>
