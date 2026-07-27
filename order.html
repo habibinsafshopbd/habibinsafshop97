@@ -69,22 +69,70 @@ button{
 
 </div>
 
-<script>
-function orderNow(){
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+getFirestore,
+doc,
+getDoc,
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+authDomain: "habib-insaf-shop.firebaseapp.com",
+projectId: "habib-insaf-shop",
+storageBucket: "habib-insaf-shop.firebasestorage.app",
+messagingSenderId: "1061560355803",
+appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+const productId = params.get("id");
+
+if(productId){
+const snap = await getDoc(doc(db,"products",productId));
+if(snap.exists()){
+document.getElementById("product").value = snap.data().name;
+}
+}
+
+window.orderNow = async function(){
 
 const product=document.getElementById("product").value;
 const name=document.getElementById("name").value;
 const phone=document.getElementById("phone").value;
 const address=document.getElementById("address").value;
 const qty=document.getElementById("qty").value;
+const note=document.getElementById("note").value;
 
 if(!product || !name || !phone || !address){
-    alert("সব তথ্য পূরণ করুন");
-    return;
+alert("সব তথ্য পূরণ করুন");
+return;
 }
 
-alert("অর্ডার গ্রহণ করা হয়েছে");
+await addDoc(collection(db,"orders"),{
+product,
+name,
+phone,
+address,
+qty,
+note,
+status:"Pending",
+time:new Date()
+});
 
+alert("অর্ডার সফলভাবে গ্রহণ করা হয়েছে");
+
+document.getElementById("name").value="";
+document.getElementById("phone").value="";
+document.getElementById("address").value="";
+document.getElementById("qty").value="1";
+document.getElementById("note").value="";
 }
 </script>
 
