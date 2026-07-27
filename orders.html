@@ -56,7 +56,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 import {
 getFirestore,
 collection,
-getDocs
+getDocs,
+doc,
+updateDoc,
+deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -77,10 +80,8 @@ async function loadOrders(){
 
 const querySnapshot = await getDocs(collection(db,"orders"));
 
-querySnapshot.forEach((doc)=>{
-
-const o = doc.data();
-
+querySnapshot.forEach((docSnap)=>{
+const o = docSnap.data();
 ordersDiv.innerHTML += `
 <div class="order">
 <h3>${o.product}</h3>
@@ -95,9 +96,27 @@ ordersDiv.innerHTML += `
 
 <p><b>মন্তব্য:</b> ${o.note || ""}</p>
 
-<button class="confirm">Confirm</button>
+<p><b>স্ট্যাটাস:</b> ${o.status || "Pending"}</p>
 
-<button class="delete">Delete</button>
+<button class="confirm"
+onclick="confirmOrder('${docSnap.id}')">
+✅ Confirm
+</button>
+
+<button style="background:orange;color:white"
+onclick="cancelOrder('${docSnap.id}')">
+❌ Cancel
+</button>
+
+<button style="background:blue;color:white"
+onclick="deliveredOrder('${docSnap.id}')">
+🚚 Delivered
+</button>
+
+<button class="delete"
+onclick="deleteOrder('${docSnap.id}')">
+🗑️ Delete
+</button>
 
 </div>
 `;
@@ -108,6 +127,37 @@ ordersDiv.innerHTML += `
 
 loadOrders();
 
+window.confirmOrder = async function(id){
+  await updateDoc(doc(db,"orders",id),{
+    status:"Confirmed"
+  });
+  alert("অর্ডার Confirm হয়েছে");
+  location.reload();
+}
+
+window.cancelOrder = async function(id){
+  await updateDoc(doc(db,"orders",id),{
+    status:"Cancelled"
+  });
+  alert("অর্ডার Cancel হয়েছে");
+  location.reload();
+}
+
+window.deliveredOrder = async function(id){
+  await updateDoc(doc(db,"orders",id),{
+    status:"Delivered"
+  });
+  alert("অর্ডার Delivered হয়েছে");
+  location.reload();
+}
+
+window.deleteOrder = async function(id){
+  if(confirm("অর্ডার Delete করবেন?")){
+    await deleteDoc(doc(db,"orders",id));
+    alert("অর্ডার Delete হয়েছে");
+    location.reload();
+  }
+}
 </script>
 
 </body>
