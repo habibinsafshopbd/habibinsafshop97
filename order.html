@@ -7,41 +7,59 @@
 
 <style>
 body{
-    font-family:Arial,sans-serif;
-    background:#f5f5f5;
-    padding:20px;
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+padding:20px;
 }
 
 .box{
-    max-width:450px;
-    margin:auto;
-    background:#fff;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,.2);
+max-width:450px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.2);
 }
 
 h2{
-    text-align:center;
-    color:#006B3C;
+text-align:center;
+color:#006B3C;
 }
 
 input,textarea{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    box-sizing:border-box;
+width:100%;
+padding:12px;
+margin:10px 0;
+box-sizing:border-box;
 }
 
 button{
-    width:100%;
-    padding:12px;
-    background:#006B3C;
-    color:white;
-    border:none;
-    border-radius:6px;
-    font-size:16px;
-    cursor:pointer;
+width:100%;
+padding:12px;
+background:#006B3C;
+color:#fff;
+border:none;
+border-radius:6px;
+font-size:16px;
+cursor:pointer;
+}
+
+.priceBox{
+background:#f8f8f8;
+padding:10px;
+border-radius:8px;
+margin:15px 0;
+}
+
+.priceBox p{
+margin:8px 0;
+font-size:16px;
+}
+
+.total{
+font-size:20px;
+color:red;
+font-weight:bold;
 }
 </style>
 
@@ -53,7 +71,7 @@ button{
 
 <h2>🛒 অর্ডার করুন</h2>
 
-<input type="text" id="product" placeholder="পণ্যের নাম">
+<input type="text" id="product" placeholder="পণ্যের নাম" readonly>
 
 <input type="text" id="name" placeholder="আপনার নাম">
 
@@ -61,11 +79,42 @@ button{
 
 <textarea id="address" placeholder="সম্পূর্ণ ঠিকানা"></textarea>
 
-<input type="number" id="qty" placeholder="পরিমাণ" value="1">
+<input type="number" id="qty" value="1" min="1">
 
 <textarea id="note" placeholder="মন্তব্য (ঐচ্ছিক)"></textarea>
 
-<button onclick="orderNow()">✅ অর্ডার কনফার্ম করুন</button>
+<h3>ডেলিভারি এলাকা</h3>
+
+<label>
+<input type="radio" name="delivery" value="60" onclick="calculateTotal()">
+নরসিংদীর ভিতরে (৳60)
+</label>
+
+<br><br>
+
+<label>
+<input type="radio" name="delivery" value="115" onclick="calculateTotal()">
+নরসিংদীর বাইরে (৳115)
+</label>
+
+<div class="priceBox">
+
+<p>পণ্যের দাম :
+<b>৳ <span id="productPrice">0</span></b></p>
+
+<p>ডেলিভারি :
+<b>৳ <span id="deliveryPrice">0</span></b></p>
+
+<p class="total">
+মোট :
+৳ <span id="totalPrice">0</span>
+</p>
+
+</div>
+
+<button onclick="orderNow()">
+✅ অর্ডার কনফার্ম করুন
+</button>
 
 </div>
 
@@ -91,24 +140,88 @@ appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let productPrice = 0;
+
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 
 if(productId){
-const snap = await getDoc(doc(db,"products",productId));
-if(snap.exists()){
-document.getElementById("product").value = snap.data().name;
+  const snap = await getDoc(doc(db,"products",productId));
+
+  if(snap.exists()){
+
+    document.getElementById("product").value = snap.data().name;
+
+    productPrice = Number(
+      snap.data().offerPrice || snap.data().regularPrice
+    );
+
+    calculateTotal();
+
+  }
 }
+
+window.calculateTotal = function(){
+
+  const qty = Number(document.getElementById("qty").value) || 1;
+
+  const selected =
+  document.querySelector('input[name="delivery"]:checked');
+
+  let delivery = 0;
+
+  if(selected){
+    delivery = Number(selected.value);
+  }
+
+  const productTotal = productPrice * qty;
+
+  document.getElementById("productPrice").innerText =
+  productTotal;
+
+  document.getElementById("deliveryPrice").innerText =
+  delivery;
+
+  document.getElementById("totalPrice").innerText =
+  productTotal + delivery;
+
 }
+
+document.getElementById("qty").addEventListener("input",calculateTotal);
 
 window.orderNow = async function(){
 
-const product=document.getElementById("product").value;
-const name=document.getElementById("name").value;
-const phone=document.getElementById("phone").value;
-const address=document.getElementById("address").value;
-const qty=document.getElementById("qty").value;
-const note=document.getElementById("note").value;
+const product =
+document.getElementById("product").value;
+
+const name =
+document.getElementById("name").value;
+
+const phone =
+document.getElementById("phone").value;
+
+const address =
+document.getElementById("address").value;
+
+const qty =
+document.getElementById("qty").value;
+
+const note =
+document.getElementById("note").value;
+
+const selected =
+document.querySelector('input[name="delivery"]:checked');
+
+if(!selected){
+alert("ডেলিভারি এলাকা নির্বাচন করুন");
+return;
+}
+
+const delivery =
+Number(selected.value);
+
+const total =
+(productPrice * Number(qty)) + delivery;
 
 if(!product || !name || !phone || !address){
 alert("সব তথ্য পূরণ করুন");
@@ -116,24 +229,26 @@ return;
 }
 
 await addDoc(collection(db,"orders"),{
+
 product,
 name,
 phone,
 address,
 qty,
 note,
+delivery,
+total,
 status:"Pending",
 time:new Date()
+
 });
 
 alert("অর্ডার সফলভাবে গ্রহণ করা হয়েছে");
 
-document.getElementById("name").value="";
-document.getElementById("phone").value="";
-document.getElementById("address").value="";
-document.getElementById("qty").value="1";
-document.getElementById("note").value="";
+location.href="products.html";
+
 }
+
 </script>
 
 </body>
