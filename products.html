@@ -1,103 +1,140 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমাদের পণ্য - Habib Insaf Shop</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>অর্ডার করুন</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+    padding:20px;
+}
+
+.box{
+    max-width:450px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+h2{
+    text-align:center;
+    color:#006B3C;
+}
+
+input,textarea{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#006B3C;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+</style>
+
 </head>
 
 <body>
 
-<header>
+<div class="box">
 
-    <button class="menu-btn" onclick="history.back()">←</button>
+<h2>🛒 অর্ডার করুন</h2>
 
-    <div class="brand">
-        <h1>Habib Insaf Shop</h1>
-    </div>
+<input type="text" id="product" placeholder="পণ্যের নাম">
 
-</header>
+<input type="text" id="name" placeholder="আপনার নাম">
 
-<h2>📦 আমাদের পণ্য</h2>
+<input type="tel" id="phone" placeholder="মোবাইল নম্বর">
 
-<div class="category-buttons">
-    <button onclick="filterProducts('all')">সব</button>
-    <button onclick="filterProducts('tupi')">টুপি</button>
-    <button onclick="filterProducts('honey')">মধু</button>
-    <button onclick="filterProducts('attar')">আতার</button>
+<textarea id="address" placeholder="সম্পূর্ণ ঠিকানা"></textarea>
+
+<input type="number" id="qty" placeholder="পরিমাণ" value="1">
+
+<textarea id="note" placeholder="মন্তব্য (ঐচ্ছিক)"></textarea>
+
+<button onclick="orderNow()">✅ অর্ডার কনফার্ম করুন</button>
+
 </div>
 
-<div class="products" id="products">
-</div>
-
-<script>
-function filterProducts(category){
-
-    let products=document.querySelectorAll(".product");
-
-    products.forEach(function(product){
-
-        if(category==="all"){
-            product.style.display="block";
-        }else if(product.classList.contains(category)){
-            product.style.display="block";
-        }else{
-            product.style.display="none";
-        }
-
-    });
-
-}
-</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
-  getFirestore,
-  collection,
-  getDocs
+getFirestore,
+doc,
+getDoc,
+collection,
+addDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
-  authDomain: "habib-insaf-shop.firebaseapp.com",
-  projectId: "habib-insaf-shop",
-  storageBucket: "habib-insaf-shop.firebasestorage.app",
-  messagingSenderId: "1061560355803",
-  appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+authDomain: "habib-insaf-shop.firebaseapp.com",
+projectId: "habib-insaf-shop",
+storageBucket: "habib-insaf-shop.firebasestorage.app",
+messagingSenderId: "1061560355803",
+appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const productsDiv = document.getElementById("products");
+const params = new URLSearchParams(window.location.search);
+const productId = params.get("id");
 
-async function loadProducts() {
-
-  const querySnapshot = await getDocs(collection(db, "products"));
-
-  querySnapshot.forEach((doc) => {
-
-    const p = doc.data();
-
-    productsDiv.innerHTML += `
-      <div class="product ${p.category}">
-        <img src="${p.image}" width="150">
-        <h3>${p.name}</h3>
-
-        <p>
-          ${p.offerPrice ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>` : `৳ ${p.regularPrice}`}
-        </p>
-
-        <p>${p.description || ""}</p>
-      </div>
-    `;
-
-  });
-
+if(productId){
+const snap = await getDoc(doc(db,"products",productId));
+if(snap.exists()){
+document.getElementById("product").value = snap.data().name;
+}
 }
 
-loadProducts();
+window.orderNow = async function(){
+
+const product=document.getElementById("product").value;
+const name=document.getElementById("name").value;
+const phone=document.getElementById("phone").value;
+const address=document.getElementById("address").value;
+const qty=document.getElementById("qty").value;
+const note=document.getElementById("note").value;
+
+if(!product || !name || !phone || !address){
+alert("সব তথ্য পূরণ করুন");
+return;
+}
+
+await addDoc(collection(db,"orders"),{
+product,
+name,
+phone,
+address,
+qty,
+note,
+status:"Pending",
+time:new Date()
+});
+
+alert("অর্ডার সফলভাবে গ্রহণ করা হয়েছে");
+
+document.getElementById("name").value="";
+document.getElementById("phone").value="";
+document.getElementById("address").value="";
+document.getElementById("qty").value="1";
+document.getElementById("note").value="";
+}
 </script>
+
 </body>
 </html>
