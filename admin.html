@@ -62,6 +62,11 @@ button{
 <input type="password" id="password" placeholder="পাসওয়ার্ড">
 
 <button onclick="login()">Login</button>
+<p style="text-align:center; margin-top:15px;">
+  <a href="#" onclick="resetPassword(); return false;">
+    🔑 পাসওয়ার্ড ভুলে গেছেন?
+  </a>
+</p>
 
 </div>
 <script type="module">
@@ -70,7 +75,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 
 import {
   getAuth,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -92,22 +98,38 @@ window.login = function () {
   const password = document.getElementById("password").value;
 
   signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(() => {
 
       alert("লগইন সফল");
 
       window.location.href = "dashboard.html";
 
     })
+    .catch(() => {
 
-    .catch((error) => {
-
-      alert("ইমেইল অথবা পাসওয়ার্ড ভুল");
+      alert("ইমেইল অথবা পাসওয়ার্ড ভুল");
 
     });
 
 }
+window.resetPassword = function () {
 
+  const email = document.getElementById("email").value;
+
+  if (!email) {
+    alert("আগে আপনার ইমেইল লিখুন");
+    return;
+  }
+
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      alert("আপনার Gmail-এ Password Reset Link পাঠানো হয়েছে");
+    })
+    .catch(() => {
+      alert("এই ইমেইলটি পাওয়া যায়নি");
+    });
+
+}
 </script>
 
 </body>
