@@ -81,6 +81,12 @@ font-weight:bold;
 
 <input type="number" id="qty" value="1" min="1">
 
+<h3>সাইজ নির্বাচন</h3>
+<div id="sizeOptions"></div>
+
+<h3>রং নির্বাচন</h3>
+<div id="colorOptions"></div>
+
 <textarea id="note" placeholder="মন্তব্য (ঐচ্ছিক)"></textarea>
 
 <h3>ডেলিভারি এলাকা</h3>
@@ -121,20 +127,20 @@ font-weight:bold;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
-getFirestore,
-doc,
-getDoc,
-collection,
-addDoc
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  addDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
-authDomain: "habib-insaf-shop.firebaseapp.com",
-projectId: "habib-insaf-shop",
-storageBucket: "habib-insaf-shop.firebasestorage.app",
-messagingSenderId: "1061560355803",
-appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+  apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+  authDomain: "habib-insaf-shop.firebaseapp.com",
+  projectId: "habib-insaf-shop",
+  storageBucket: "habib-insaf-shop.firebasestorage.app",
+  messagingSenderId: "1061560355803",
+  appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -145,110 +151,131 @@ let productPrice = 0;
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 
-if(productId){
-  const snap = await getDoc(doc(db,"products",productId));
-
-  if(snap.exists()){
-
-    document.getElementById("product").value = snap.data().name;
-
-    productPrice = Number(
-      snap.data().offerPrice || snap.data().regularPrice
-    );
-
-    calculateTotal();
-
-  }
-}
-
-window.calculateTotal = function(){
+window.calculateTotal = function () {
 
   const qty = Number(document.getElementById("qty").value) || 1;
 
-  const selected =
-  document.querySelector('input[name="delivery"]:checked');
+  const selected = document.querySelector('input[name="delivery"]:checked');
 
-  let delivery = 0;
-
-  if(selected){
-    delivery = Number(selected.value);
-  }
+  let delivery = selected ? Number(selected.value) : 0;
 
   const productTotal = productPrice * qty;
 
-  document.getElementById("productPrice").innerText =
-  productTotal;
+  document.getElementById("productPrice").innerText = productTotal;
+  document.getElementById("deliveryPrice").innerText = delivery;
+  document.getElementById("totalPrice").innerText = productTotal + delivery;
+};
 
-  document.getElementById("deliveryPrice").innerText =
-  delivery;
+if (productId) {
+  const snap = await getDoc(doc(db, "products", productId));
 
-  document.getElementById("totalPrice").innerText =
-  productTotal + delivery;
+  if (snap.exists()) {
 
+    const data = snap.data();
+
+    document.getElementById("product").value = data.name;
+
+productPrice = Number(data.offerPrice || data.regularPrice);
+
+// সাইজ দেখাবে
+if (data.sizes && data.sizes.length > 0) {
+
+  let html = "";
+
+  data.sizes.forEach(size => {
+    html += `
+      <label>
+        <input type="radio" name="size" value="${size}">
+        ${size}
+      </label><br>
+    `;
+  });
+
+  document.getElementById("sizeOptions").innerHTML = html;
 }
 
-document.getElementById("qty").addEventListener("input",calculateTotal);
+// রং দেখাবে
+if (data.colors && data.colors.length > 0) {
 
-window.orderNow = async function(){
+  let html = "";
 
-const product =
-document.getElementById("product").value;
+  data.colors.forEach(color => {
+    html += `
+      <label>
+        <input type="radio" name="color" value="${color}">
+        ${color}
+      </label><br>
+    `;
+  });
 
-const name =
-document.getElementById("name").value;
-
-const phone =
-document.getElementById("phone").value;
-
-const address =
-document.getElementById("address").value;
-
-const qty =
-document.getElementById("qty").value;
-
-const note =
-document.getElementById("note").value;
-
-const selected =
-document.querySelector('input[name="delivery"]:checked');
-
-if(!selected){
-alert("ডেলিভারি এলাকা নির্বাচন করুন");
-return;
+  document.getElementById("colorOptions").innerHTML = html;
 }
 
-const delivery =
-Number(selected.value);
+calculateTotal();
+}   // 👈 এটা যোগ করুন
 
-const total =
-(productPrice * Number(qty)) + delivery;
+}
+document.getElementById("qty").addEventListener("input", calculateTotal);
 
-if(!product || !name || !phone || !address){
-alert("সব তথ্য পূরণ করুন");
-return;
+window.orderNow = async function () {
+
+  const product = document.getElementById("product").value;
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const address = document.getElementById("address").value;
+  const qty = document.getElementById("qty").value;
+  const note = document.getElementById("note").value;
+const size =
+document.querySelector('input[name="size"]:checked')?.value || "";
+
+const color =
+document.querySelector('input[name="color"]:checked')?.value || "";
+
+// সাইজ অপশন থাকলে নির্বাচন বাধ্যতামূলক
+if(document.querySelectorAll('input[name="size"]').length>0 && !size){
+    alert("সাইজ নির্বাচন করুন");
+    return;
 }
 
-await addDoc(collection(db,"orders"),{
+// রং অপশন থাকলে নির্বাচন বাধ্যতামূলক
+if(document.querySelectorAll('input[name="color"]').length>0 && !color){
+    alert("রং নির্বাচন করুন");
+    return;
+}
+  const selected = document.querySelector('input[name="delivery"]:checked');
 
-product,
-name,
-phone,
-address,
-qty,
-note,
-delivery,
-total,
-status:"Pending",
-time:new Date()
+  if (!selected) {
+    alert("ডেলিভারি এলাকা নির্বাচন করুন");
+    return;
+  }
 
+  if (!product || !name || !phone || !address) {
+    alert("সব তথ্য পূরণ করুন");
+    return;
+  }
+
+  const delivery = Number(selected.value);
+  const total = (productPrice * Number(qty)) + delivery;
+
+  await addDoc(collection(db, "orders"), {
+  product,
+  name,
+  phone,
+  address,
+  qty,
+  size,
+  color,
+  note,
+  delivery,
+  total,
+  status: "Pending",
+  time: new Date()
 });
 
-alert("অর্ডার সফলভাবে গ্রহণ করা হয়েছে");
+  alert("অর্ডার সফলভাবে গ্রহণ করা হয়েছে");
 
-location.href="products.html";
-
-}
-
+  location.href = "products.html";
+};
 </script>
 
 </body>
