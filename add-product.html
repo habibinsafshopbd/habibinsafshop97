@@ -73,7 +73,11 @@ button{
 ➕ ক্যাটাগরি যোগ করুন
 </button>
 
-<input type="text" id="image" placeholder="ছবির Direct Link পেস্ট করুন">
+<button type="button" onclick="addImage()">
+➕ ছবি যোগ করুন
+</button>
+
+<div id="imageList"></div>
 <label>সাইজ</label>
 <input type="text" id="sizeInput" placeholder="সাইজ লিখুন">
 <button type="button" onclick="addSize()">➕ সাইজ যোগ করুন</button>
@@ -148,6 +152,7 @@ loadCategories();
 
 let sizes = [];
 let colors = [];
+let images = [];
 
 window.addSize = function () {
   const value = document.getElementById("sizeInput").value;
