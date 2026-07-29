@@ -73,8 +73,10 @@ button{
 ➕ ক্যাটাগরি যোগ করুন
 </button>
 
+<input type="text" id="imageInput" placeholder="ছবির Direct Link">
+
 <button type="button" onclick="addImage()">
-➕ ছবি যোগ করুন
++ ছবি যোগ করুন
 </button>
 
 <div id="imageList"></div>
@@ -153,6 +155,21 @@ loadCategories();
 let sizes = [];
 let colors = [];
 let images = [];
+window.addImage = function () {
+
+    const input = document.getElementById("imageInput");
+
+    if (!input.value.trim()) return;
+
+    images.push(input.value.trim());
+
+    document.getElementById("imageList").innerHTML =
+    images.map((img,index)=>`
+        <p>${index+1}. ${img}</p>
+    `).join("");
+
+    input.value="";
+}
 
 window.addSize = function () {
   const value = document.getElementById("sizeInput").value;
@@ -177,9 +194,8 @@ const regularPrice = document.getElementById("regularPrice").value;
 const offerPrice = document.getElementById("offerPrice").value;
 const description = document.getElementById("description").value;
 const category = document.getElementById("category").value;
-const image = document.getElementById("image").value;
 
-if (!name || !regularPrice || !category || !image) {
+if (!name || !regularPrice || !category || images.length === 0) {
     alert("পণ্যের নাম, রেগুলার দাম, ক্যাটাগরি ও ছবির লিংক অবশ্যই দিতে হবে");
     return;
 }
@@ -190,7 +206,7 @@ await addDoc(collection(db, "products"), {
     offerPrice: offerPrice,
     description: description,
     category: category,
-    image: image,
+    images: images,
 
     sizes: sizes,
     colors: colors
@@ -203,7 +219,7 @@ document.getElementById("regularPrice").value = "";
 document.getElementById("offerPrice").value = "";
 document.getElementById("description").value = "";
 document.getElementById("category").value = "";
-document.getElementById("image").value = "";
+document.getElementById("imageInput").value = "";
 document.getElementById("sizeInput").value = "";
 document.getElementById("colorInput").value = "";
 
@@ -212,6 +228,7 @@ colors = [];
 images = [];
 document.getElementById("sizeList").innerHTML = "";
 document.getElementById("colorList").innerHTML = "";
+document.getElementById("imageList").innerHTML = "";
 
 }
 </script>
