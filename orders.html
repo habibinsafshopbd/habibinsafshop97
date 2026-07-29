@@ -94,9 +94,15 @@ ordersDiv.innerHTML += `
 
 <p><b>পরিমাণ:</b> ${o.qty}</p>
 
+<p><b>সাইজ:</b> ${o.size || "নেই"}</p>
+
+<p><b>রং:</b> ${o.color || "নেই"}</p>
+
+<p><b>মোট দাম:</b> ৳${o.total || 0}</p>
+
 <p><b>মন্তব্য:</b> ${o.note || ""}</p>
 
-<p><b>স্ট্যাটাস:</b> ${o.status || "Pending"}</p>
+<p><b>স্ট্যাটাস:</b> ${o.status || "Pending"}</p>>
 
 <button class="confirm"
 onclick="confirmOrder('${docSnap.id}')">
