@@ -81,8 +81,10 @@ async function loadProducts() {
     const p = doc.data();
 
     productsDiv.innerHTML += `
-  <div class="product ${p.category}">
-    <img src="${p.images ? p.images[0] : ''}" width="150">
+  ‎<img src="${p.images ? p.images[0] : ''}"
+     width="150"
+     style="cursor:pointer"
+     onclick="location.href='product.html?id=${doc.id}'">
     <h3>${p.name}</h3>
 
     <p>
