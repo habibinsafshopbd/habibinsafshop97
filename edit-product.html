@@ -63,9 +63,130 @@ cursor:pointer;
 <input type="number" id="offerPrice" placeholder="অফার দাম">
 
 <textarea id="description" rows="4" placeholder="পণ্যের বিবরণ"></textarea>
-
 <input type="text" id="image" placeholder="ছবির Direct Link">
+
+<input type="text" id="sizes" placeholder="সাইজ (19,20,21)">
+
+<input type="text" id="colors" placeholder="রং (সাদা,কালো)">
+
+<input type="text" id="category" placeholder="ক্যাটাগরি (tupi,honey,attar)">
 
 <button onclick="updateProduct()">💾 Update</button>
 
 </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
+  authDomain: "habib-insaf-shop.firebaseapp.com",
+  projectId: "habib-insaf-shop",
+  storageBucket: "habib-insaf-shop.firebasestorage.app",
+  messagingSenderId: "1061560355803",
+  appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let selectedId = "";
+
+const productList = document.getElementById("productList");
+
+const querySnapshot = await getDocs(collection(db, "products"));
+
+querySnapshot.forEach((docSnap) => {
+  productList.innerHTML += `
+    <option value="${docSnap.id}">
+      ${docSnap.data().name}
+    </option>
+  `;
+});
+productList.onchange = async function () {
+
+  selectedId = this.value;
+
+  if (!selectedId) return;
+
+  const snap = await getDoc(doc(db, "products", selectedId));
+
+  if (snap.exists()) {
+
+    const p = snap.data();
+
+    document.getElementById("name").value = p.name || "";
+    document.getElementById("regularPrice").value = p.regularPrice || "";
+    document.getElementById("offerPrice").value = p.offerPrice || "";
+    document.getElementById("description").value = p.description || "";
+    document.getElementById("image").value = (p.images && p.images[0]) ? p.images[0] : "";
+
+    document.getElementById("sizes").value =
+      p.sizes ? p.sizes.join(",") : "";
+
+    document.getElementById("colors").value =
+      p.colors ? p.colors.join(",") : "";
+
+    document.getElementById("category").value =
+      p.category || "";
+  }
+
+};
+window.updateProduct = async function () {
+
+  if (!selectedId) {
+    alert("আগে একটি পণ্য নির্বাচন করুন");
+    return;
+  }
+
+  try {
+
+    await updateDoc(doc(db, "products", selectedId), {
+
+      name: document.getElementById("name").value,
+
+      regularPrice: Number(document.getElementById("regularPrice").value),
+
+      offerPrice: Number(document.getElementById("offerPrice").value),
+
+      description: document.getElementById("description").value,
+
+      images: [
+        document.getElementById("image").value
+      ],
+
+      sizes: document.getElementById("sizes").value
+        .split(",")
+        .map(s => s.trim())
+        .filter(s => s),
+
+      colors: document.getElementById("colors").value
+        .split(",")
+        .map(c => c.trim())
+        .filter(c => c),
+
+      category: document.getElementById("category").value
+
+    });
+
+    alert("✅ পণ্য সফলভাবে আপডেট হয়েছে");
+
+  } catch (error) {
+
+    console.error(error);
+    alert("❌ আপডেট করা যায়নি");
+
+  }
+
+};
+</script>
+
+</body>
+</html>
