@@ -145,6 +145,12 @@ cursor:pointer;
 <span class="offer" id="offerPrice"></span>
 </div>
 
+<div class="desc" id="description"></div>
+
+<button class="orderBtn" id="orderBtn">
+🛒 অর্ডার করুন
+</button>
+
 <div id="orderForm" style="display:none; margin-top:20px;">
 
 <h3>সাইজ</h3>
@@ -302,7 +308,9 @@ document.getElementById("colorOptions").innerHTML = html;
 
 document.getElementById("orderBtn").onclick = function(){
 
-location.href=`order.html?id=${productId}`;
+document.getElementById("orderForm").style.display = "block";
+
+this.style.display = "none";
 
 };
 
