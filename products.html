@@ -81,23 +81,27 @@ async function loadProducts() {
     const p = doc.data();
 
     productsDiv.innerHTML += `
-  ‎<img src="${p.images ? p.images[0] : ''}"
-     width="150"
-     style="cursor:pointer"
-     onclick="location.href='product.html?id=${doc.id}'">
-    <h3>${p.name}</h3>
+<div class="product ${p.category || ""}">
 
-    <p>
-      ${p.offerPrice ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>` : `৳ ${p.regularPrice}`}
-    </p>
+  <img src="${p.images ? p.images[0] : ''}"
+       width="150"
+       style="cursor:pointer"
+       onclick="location.href='product.html?id=${doc.id}'">
 
-    <p>${p.description || ""}</p>
+  <h3>${p.name}</h3>
 
-    <button onclick="location.href='order.html?id=${doc.id}'">
-      🛒 অর্ডার করুন
-    </button>
-  </div>
-    `;
+  <p>
+    ${p.offerPrice
+      ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>`
+      : `৳ ${p.regularPrice}`}
+  </p>
+
+  <button onclick="location.href='product.html?id=${doc.id}'">
+    🛒 অর্ডার করুন
+  </button>
+
+</div>
+`;
 
   });
 
