@@ -145,20 +145,24 @@ cursor:pointer;
 <span class="offer" id="offerPrice"></span>
 </div>
 
-<div class="desc" id="description"></div>
+<div id="orderForm" style="display:none; margin-top:20px;">
 
-<div class="optionBox">
 <h3>সাইজ</h3>
 <div id="sizeOptions"></div>
-</div>
 
-<div class="optionBox">
 <h3>রং</h3>
 <div id="colorOptions"></div>
-</div>
 
-<button class="orderBtn" id="orderBtn">
-🛒 অর্ডার করুন
+<input type="text" id="customerName" placeholder="আপনার নাম">
+
+<input type="tel" id="customerPhone" placeholder="মোবাইল নম্বর">
+
+<textarea id="customerAddress" placeholder="ঠিকানা"></textarea>
+
+<input type="number" id="quantity" value="1" min="1" placeholder="পরিমাণ">
+
+<button id="confirmOrderBtn" class="orderBtn">
+✅ অর্ডার কনফার্ম করুন
 </button>
 
 </div>
@@ -236,10 +240,10 @@ images = data.images || [];
 document.getElementById("productName").innerText = data.name;
 
 document.getElementById("regularPrice").innerText =
-"৳ "+data.regularPrice;
+"৳ " + data.regularPrice;
 
 document.getElementById("offerPrice").innerText =
-"৳ "+(data.offerPrice || data.regularPrice);
+"৳ " + (data.offerPrice || data.regularPrice);
 
 document.getElementById("description").innerText =
 data.description || "";
@@ -249,23 +253,19 @@ const thumbs = document.getElementById("thumbs");
 images.forEach((img,index)=>{
 
 thumbs.innerHTML += `
-<img src="${img}"
-onclick="showImage(${index})">
+<img src="${img}" onclick="showImage(${index})">
 `;
 
 });
 
 showImage(0);
 
-}
-
-}
 // সাইজ দেখাবে
-if (data.sizes && data.sizes.length > 0) {
+if(data.sizes && data.sizes.length>0){
 
-let html = "";
+let html="";
 
-data.sizes.forEach(size => {
+data.sizes.forEach(size=>{
 
 html += `
 <label>
@@ -281,11 +281,11 @@ document.getElementById("sizeOptions").innerHTML = html;
 }
 
 // রং দেখাবে
-if (data.colors && data.colors.length > 0) {
+if(data.colors && data.colors.length>0){
 
-let html = "";
+let html="";
 
-data.colors.forEach(color => {
+data.colors.forEach(color=>{
 
 html += `
 <label>
@@ -300,14 +300,17 @@ document.getElementById("colorOptions").innerHTML = html;
 
 }
 
-// অর্ডার বাটন
 document.getElementById("orderBtn").onclick = function(){
 
-location.href = `order.html?id=${productId}`;
+location.href=`order.html?id=${productId}`;
 
 };
 
-window.showImage = showImage;
+}
+
+}
+
+window.showImage = showImage;;
 
 </script>
 
