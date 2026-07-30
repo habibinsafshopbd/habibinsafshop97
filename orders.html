@@ -84,15 +84,15 @@ querySnapshot.forEach((docSnap)=>{
 const o = docSnap.data();
 ordersDiv.innerHTML += `
 <div class="order">
-<h3>${o.product}</h3>
+<h3>${o.productName}</h3>
 
-<p><b>নাম:</b> ${o.name}</p>
+<p><b>নাম:</b> ${o.customerName}</p>
 
-<p><b>মোবাইল:</b> ${o.phone}</p>
+<p><b>মোবাইল:</b> ${o.customerPhone}</p>
 
-<p><b>ঠিকানা:</b> ${o.address}</p>
+<p><b>ঠিকানা:</b> ${o.customerAddress}</p>
 
-<p><b>পরিমাণ:</b> ${o.qty}</p>
+<p><b>পরিমাণ:</b> ${o.quantity}</p>
 
 <p><b>সাইজ:</b> ${o.size || "নেই"}</p>
 
@@ -102,7 +102,7 @@ ordersDiv.innerHTML += `
 
 <p><b>মন্তব্য:</b> ${o.note || ""}</p>
 
-<p><b>স্ট্যাটাস:</b> ${o.status || "Pending"}</p>>
+<p><b>স্ট্যাটাস:</b> ${o.status || "Pending"}</p>
 
 <button class="confirm"
 onclick="confirmOrder('${docSnap.id}')">
