@@ -215,6 +215,7 @@ const productId = params.get("id");
 
 let images = [];
 let current = 0;
+let data = {};
 
 function showImage(index){
 
@@ -256,7 +257,7 @@ const snap = await getDoc(doc(db,"products",productId));
 
 if(snap.exists()){
 
-const data = snap.data();
+data = snap.data();
 
 images = data.images || [];
 
@@ -282,6 +283,10 @@ thumbs.innerHTML += `
 });
 
 showImage(0);
+
+calculateTotal();
+
+document.getElementById("quantity").oninput = calculateTotal;
 
 // সাইজ দেখাবে
 if(data.sizes && data.sizes.length>0){
