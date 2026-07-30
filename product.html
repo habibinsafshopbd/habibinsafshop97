@@ -176,8 +176,8 @@ cursor:pointer;
 <h3>ডেলিভারি চার্জ</h3>
 
 <select id="deliveryCharge" onchange="calculateTotal()">
-    <option value="80">ঢাকার ভিতরে - ৳80</option>
-    <option value="130">ঢাকার বাইরে - ৳130</option>
+    <option value="70">নরসিংদী ভিতরে - ৳70</option>
+    <option value="130">নরসিংদী বাইরে - ৳130</option>
 </select>
 
 <h3>সর্বমোট</h3>
@@ -345,18 +345,20 @@ document.getElementById("colorOptions").innerHTML = html;
 
 }
 
-document.getElementById("orderBtn").onclick = function(){
+document.getElementById("orderBtn").addEventListener("click", function(){
 
-document.getElementById("orderForm").style.display = "block";
+    document.getElementById("orderForm").style.display = "block";
 
-this.style.display = "none";
+    this.style.display = "none";
 
+});
+
+}
+
+}
+document.getElementById("confirmOrderBtn").onclick = function () {
+    alert("অর্ডার কনফার্ম হয়েছে");
 };
-
-}
-
-}
-
 window.showImage = showImage;;
 
 </script>
