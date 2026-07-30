@@ -167,6 +167,23 @@ cursor:pointer;
 
 <input type="number" id="quantity" value="1" min="1" placeholder="পরিমাণ">
 
+<!-- এখানেই বসবে ↓ -->
+
+<h3>মোট দাম</h3>
+
+<p id="totalPrice">৳ 0</p>
+
+<h3>ডেলিভারি চার্জ</h3>
+
+<select id="deliveryCharge" onchange="calculateTotal()">
+    <option value="80">ঢাকার ভিতরে - ৳80</option>
+    <option value="130">ঢাকার বাইরে - ৳130</option>
+</select>
+
+<h3>সর্বমোট</h3>
+
+<p id="grandTotal">৳ 0</p>
+
 <button id="confirmOrderBtn" class="orderBtn">
 ✅ অর্ডার কনফার্ম করুন
 </button>
