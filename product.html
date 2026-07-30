@@ -250,7 +250,21 @@ showImage(current+1);
 }
 
 }
+function calculateTotal(){
 
+    const qty = Number(document.getElementById("quantity").value) || 1;
+
+    const price = Number(data.offerPrice || data.regularPrice);
+
+    const delivery = Number(document.getElementById("deliveryCharge").value);
+
+    const total = qty * price;
+
+    document.getElementById("totalPrice").innerText = "৳ " + total;
+
+    document.getElementById("grandTotal").innerText = "৳ " + (total + delivery);
+
+}
 if(productId){
 
 const snap = await getDoc(doc(db,"products",productId));
@@ -287,6 +301,9 @@ showImage(0);
 calculateTotal();
 
 document.getElementById("quantity").oninput = calculateTotal;
+document.getElementById("deliveryCharge").onchange = calculateTotal;
+
+window.calculateTotal = calculateTotal;
 
 // সাইজ দেখাবে
 if(data.sizes && data.sizes.length>0){
