@@ -144,7 +144,7 @@ cursor:pointer;
 <del id="regularPrice"></del><br>
 <span class="offer" id="offerPrice"></span>
 </div>
-
+<h3> পণ্যের বিবরণ</h3>
 <div class="desc" id="description"></div>
 
 <button class="orderBtn" id="orderBtn">
@@ -195,8 +195,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 import {
 getFirestore,
 doc,
-getDoc
+getDoc,
+collection,
+addDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
 apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
@@ -356,9 +359,52 @@ document.getElementById("orderBtn").addEventListener("click", function(){
 }
 
 }
-document.getElementById("confirmOrderBtn").onclick = function () {
-    alert("অর্ডার কনফার্ম হয়েছে");
+document.getElementById("confirmOrderBtn").onclick = async function () {
+
+    const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
+    const address = document.getElementById("customerAddress").value.trim();
+
+    const qty = document.getElementById("quantity").value;
+
+    const size = document.querySelector('input[name="size"]:checked')?.value || "";
+
+    const color = document.querySelector('input[name="color"]:checked')?.value || "";
+
+    const total = document.getElementById("grandTotal").innerText;
+
+    if (!name || !phone || !address) {
+        alert("সব তথ্য পূরণ করুন");
+        return;
+    }
+
+    try {
+
+        await addDoc(collection(db, "orders"), {
+            productId: productId,
+            productName: data.name,
+            regularPrice: data.regularPrice,
+            offerPrice: data.offerPrice,
+            quantity: qty,
+            size: size,
+            color: color,
+            customerName: name,
+            customerPhone: phone,
+            customerAddress: address,
+            total: total,
+            status: "Pending",
+            createdAt: new Date()
+        });
+
+        alert("অর্ডার সফলভাবে সংরক্ষণ হয়েছে");
+
+    } catch (error) {
+        alert("অর্ডার সংরক্ষণ করা যায়নি");
+        console.error(error);
+    }
+
 };
+
 window.showImage = showImage;;
 
 </script>
