@@ -148,26 +148,33 @@ productList.onchange = async function () {
 ‎  const oldImages = document.getElementById("oldImages");
 ‎  oldImages.innerHTML = "";
 ‎
-‎  if (productData.images) {
-‎
-‎    productData.images.forEach((img, index) => {
-‎
-‎      oldImages.innerHTML += `
-‎        
-‎<div style="margin-bottom:10px;padding:8px;border:1px solid #ddd;border-radius:6px;">
-‎  <small>ছবি ${index + 1}</small><br>
-‎  <input type="text" value="${img}" readonly style="width:100%;">
-‎  <button type="button"
-‎    onclick="deleteImage(${index})"
-‎    style="margin-top:5px;background:red;color:white;border:none;padding:6px 10px;border-radius:5px;">
-‎    🗑️ ছবি মুছুন
-‎  </button>
-‎</div>
-‎`;
-‎
-‎    });
-‎
-};
+if (productData.images) {
+
+    productData.images.forEach((img, index) => {
+
+        oldImages.innerHTML += `
+<div style="margin-bottom:10px;padding:8px;border:1px solid #ddd;border-radius:6px;">
+
+<small>ছবি ${index + 1}</small><br>
+
+<input
+type="text"
+value="${img}"
+style="width:100%;margin-top:5px;">
+
+<button
+type="button"
+onclick="deleteImage(${index})"
+style="margin-top:5px;background:red;color:white;border:none;padding:6px 10px;border-radius:5px;">
+🗑️ ছবি মুছুন
+</button>
+
+</div>
+`;
+
+    });
+
+}
 };
 window.updateProduct = async function () {
 
@@ -178,15 +185,25 @@ window.updateProduct = async function () {
 
   try {
 
-    // পুরনো ছবিগুলো রেখে দিচ্ছি
-    let images = productData.images || [];
+ // পুরনো ছবিগুলো (যদি এডিট করা হয়ে থাকে)
+let images = [];
 
-    // নতুন ছবি
-    const newImage = document.getElementById("newImage").value.trim();
+document.querySelectorAll("#oldImages input").forEach(input => {
+  if (input.value.trim() !== "") {
+    images.push(input.value.trim());
+  }
+});
 
-    // যদি নতুন লিংক লেখা হয় তাহলে শেষে যোগ হবে
-    if (newImage !== "") {
-      images.push(newImage);
+// নতুন ছবিগুলো যোগ হবে
+const newImages = document
+  .getElementById("newImage")
+  .value
+  .split(",")
+  .map(img => img.trim())
+  .filter(img => img !== "");
+
+// পুরনো + নতুন
+images = [...images, ...newImages];
     }
 
     await updateDoc(doc(db, "products", selectedId), {
