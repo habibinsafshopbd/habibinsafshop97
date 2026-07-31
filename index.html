@@ -56,11 +56,53 @@
 </div>
 <section class="islamic-banner">
 </section>
-<script src="script.js"></script>
+<!-- জনপ্রিয় পণ্য -->
+<section class="home-products">
 
+<h2>⭐ জনপ্রিয় পণ্য</h2>
+
+<div class="products" id="homeProducts">
+</div>
+
+<div style="text-align:center;margin:20px 0;">
+<a href="products.html" class="product-btn">
+📦 পণ্য দেখুন
+</a>
+</div>
+
+</section>
+
+<!-- আমাদের অঙ্গীকার -->
+<section class="commitment">
+
+<h2>🤝 আমাদের অঙ্গীকার</h2>
+
+<p><strong>ক্ষণিকের লাভ নয়, দীর্ঘমেয়াদি আস্থা ও সম্পর্কই লক্ষ্য।</strong></p>
+
+<p>
+<strong>হাবিব ইনসাফ শপ</strong>-এর বিশ্বাস—সততা ও বিশ্বস্ততাই একটি সফল ব্যবসার মূল ভিত্তি।
+</p>
+
+<p>
+কথায় নয়, কাজেও সেই বিশ্বাসের প্রতিফলন রাখার চেষ্টা থাকবে, ইনশাআল্লাহ।
+জেনে-বুঝে কখনো নিম্নমানের পণ্য দেওয়া হবে না, ইনশাআল্লাহ।
+</p>
+
+<p>
+প্রতিটি গ্রাহকের কাছে মানসম্মত পণ্য, ন্যায্য মূল্য এবং আন্তরিক সেবা পৌঁছে দেওয়াই আমাদের লক্ষ্য।
+</p>
+
+<p>
+<strong>আপনার আস্থা ও দোয়াই হাবিব ইনসাফ শপ-এর এগিয়ে চলার প্রেরণা।</strong>
+</p>
+
+<h3>সততা • আস্থা • মানসম্মত পণ্য</h3>
+
+</section>
+<script src="script.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDMQSGBuHukkUaJdktUeaA6-4xnSRKaPjs",
@@ -70,10 +112,45 @@ const firebaseConfig = {
   messagingSenderId: "1061560355803",
   appId: "1:1061560355803:web:fde04cfdd52ecabd20f5fe",
   measurementId: "G-VVVSR338FN"
+  
+  
 };
-
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+// 👇 এখান থেকে জনপ্রিয় পণ্য দেখানোর কোড বসবে
+const homeProducts = document.getElementById("homeProducts");
+
+const querySnapshot = await getDocs(collection(db, "products"));
+
+let count = 0;
+
+querySnapshot.forEach((doc) => {
+
+  if (count >= 8) return;
+
+  const p = doc.data();
+
+  homeProducts.innerHTML += `
+    <div class="product">
+      <img src="${p.images ? p.images[0] : ''}"
+           onclick="location.href='product.html?id=${doc.id}'">
+
+      <h3>${p.name}</h3>
+
+      <p>
+        ${p.offerPrice
+          ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>`
+          : `৳ ${p.regularPrice}`}
+      </p>
+
+      <button onclick="location.href='product.html?id=${doc.id}'">
+                </button>
+    </div>
+  `;
+
+  count++;
+});
 </script>
 </body>
 </html>
