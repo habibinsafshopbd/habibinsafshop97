@@ -64,6 +64,11 @@ cursor:pointer;
 
 <textarea id="description" rows="4" placeholder="পণ্যের বিবরণ"></textarea>
 <input type="text" id="image" placeholder="ছবির Direct Link">
+<h3>বর্তমান ছবি</h3>
+
+<div id="oldImages"></div>
+
+<input type="text" id="newImage" placeholder="নতুন ছবির Direct Link">
 
 <input type="text" id="sizes" placeholder="সাইজ (19,20,21)">
 
@@ -76,6 +81,7 @@ cursor:pointer;
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
 import {
   getFirestore,
   collection,
@@ -98,46 +104,70 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let selectedId = "";
+let productData = {};
 
 const productList = document.getElementById("productList");
 
 const querySnapshot = await getDocs(collection(db, "products"));
 
 querySnapshot.forEach((docSnap) => {
+
   productList.innerHTML += `
     <option value="${docSnap.id}">
       ${docSnap.data().name}
     </option>
   `;
+
 });
 productList.onchange = async function () {
-
-  selectedId = this.value;
-
-  if (!selectedId) return;
-
-  const snap = await getDoc(doc(db, "products", selectedId));
-
-  if (snap.exists()) {
-
-    const p = snap.data();
-
-    document.getElementById("name").value = p.name || "";
-    document.getElementById("regularPrice").value = p.regularPrice || "";
-    document.getElementById("offerPrice").value = p.offerPrice || "";
-    document.getElementById("description").value = p.description || "";
-    document.getElementById("image").value = (p.images && p.images[0]) ? p.images[0] : "";
-
-    document.getElementById("sizes").value =
-      p.sizes ? p.sizes.join(",") : "";
-
-    document.getElementById("colors").value =
-      p.colors ? p.colors.join(",") : "";
-
-    document.getElementById("category").value =
-      p.category || "";
-  }
-
+‎
+‎  selectedId = this.value;
+‎
+‎  if (!selectedId) return;
+‎
+‎  const snap = await getDoc(doc(db, "products", selectedId));
+‎
+‎  if (!snap.exists()) return;
+‎
+‎  productData = snap.data();
+‎
+‎  document.getElementById("name").value = productData.name || "";
+‎  document.getElementById("regularPrice").value = productData.regularPrice || "";
+‎  document.getElementById("offerPrice").value = productData.offerPrice || "";
+‎  document.getElementById("description").value = productData.description || "";
+‎
+‎  document.getElementById("sizes").value =
+‎    productData.sizes ? productData.sizes.join(",") : "";
+‎
+‎  document.getElementById("colors").value =
+‎    productData.colors ? productData.colors.join(",") : "";
+‎
+‎  document.getElementById("category").value =
+‎    productData.category || "";
+‎
+‎  const oldImages = document.getElementById("oldImages");
+‎  oldImages.innerHTML = "";
+‎
+‎  if (productData.images) {
+‎
+‎    productData.images.forEach((img, index) => {
+‎
+‎      oldImages.innerHTML += `
+‎        
+‎<div style="margin-bottom:10px;padding:8px;border:1px solid #ddd;border-radius:6px;">
+‎  <small>ছবি ${index + 1}</small><br>
+‎  <input type="text" value="${img}" readonly style="width:100%;">
+‎  <button type="button"
+‎    onclick="deleteImage(${index})"
+‎    style="margin-top:5px;background:red;color:white;border:none;padding:6px 10px;border-radius:5px;">
+‎    🗑️ ছবি মুছুন
+‎  </button>
+‎</div>
+‎`;
+‎
+‎    });
+‎
+};
 };
 window.updateProduct = async function () {
 
@@ -147,6 +177,17 @@ window.updateProduct = async function () {
   }
 
   try {
+
+    // পুরনো ছবিগুলো রেখে দিচ্ছি
+    let images = productData.images || [];
+
+    // নতুন ছবি
+    const newImage = document.getElementById("newImage").value.trim();
+
+    // যদি নতুন লিংক লেখা হয় তাহলে শেষে যোগ হবে
+    if (newImage !== "") {
+      images.push(newImage);
+    }
 
     await updateDoc(doc(db, "products", selectedId), {
 
@@ -158,10 +199,6 @@ window.updateProduct = async function () {
 
       description: document.getElementById("description").value,
 
-      images: [
-        document.getElementById("image").value
-      ],
-
       sizes: document.getElementById("sizes").value
         .split(",")
         .map(s => s.trim())
@@ -172,11 +209,17 @@ window.updateProduct = async function () {
         .map(c => c.trim())
         .filter(c => c),
 
-      category: document.getElementById("category").value
+      category: document.getElementById("category").value,
+
+      images: images
 
     });
 
     alert("✅ পণ্য সফলভাবে আপডেট হয়েছে");
+
+    document.getElementById("newImage").value = "";
+
+    await productList.onchange.call(productList);
 
   } catch (error) {
 
@@ -186,7 +229,32 @@ window.updateProduct = async function () {
   }
 
 };
-</script>
-
-</body>
-</html>
+‎
+‎window.deleteImage = async function(index){
+‎
+‎  if(!confirm("এই ছবিটি মুছতে চান?")) return;
+‎
+‎  productData.images.splice(index,1);
+‎
+‎  try{
+‎
+‎    await updateDoc(doc(db,"products",selectedId),{
+‎      images: productData.images
+‎    });
+‎
+‎    alert("✅ ছবি মুছে ফেলা হয়েছে");
+‎
+‎    productList.onchange();
+‎
+‎  }catch(error){
+‎
+‎    console.error(error);
+‎    alert("❌ ছবি মুছতে সমস্যা হয়েছে");
+‎
+‎  }
+‎
+‎};
+‎</script>
+‎
+‎</body>
+‎</html>
