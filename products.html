@@ -21,16 +21,10 @@
 
 <h2>📦 আমাদের পণ্য</h2>
 
-<div class="category-buttons">
+<div class="category-buttons" id="categoryButtons">
     <button onclick="filterProducts('all')">সব</button>
-    <button onclick="filterProducts('tupi')">টুপি</button>
-    <button onclick="filterProducts('honey')">মধু</button>
-    <button onclick="filterProducts('attar')">আতার</button>
 </div>
-
-<div class="products" id="products">
-</div>
-
+<div class="products" id="products"></div>
 <script>
 function filterProducts(category){
 
@@ -71,6 +65,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const productsDiv = document.getElementById("products");
+const categoryButtons = document.getElementById("categoryButtons");
+const categories = new Set();
 
 async function loadProducts() {
 
@@ -79,6 +75,8 @@ async function loadProducts() {
   querySnapshot.forEach((doc) => {
 
     const p = doc.data();
+    
+    categories.add(p.category);
 
     productsDiv.innerHTML += `
 <div class="product ${p.category || ""}">
@@ -88,22 +86,30 @@ async function loadProducts() {
        style="cursor:pointer"
        onclick="location.href='product.html?id=${doc.id}'">
 
-  <h3>${p.name}</h3>
+<h3 style="cursor:pointer"
+onclick="location.href='product.html?id=${doc.id}'">
+${p.name}
+</h3>
 
-  <p>
-    ${p.offerPrice
-      ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>`
-      : `৳ ${p.regularPrice}`}
-  </p>
-
-  <button onclick="location.href='product.html?id=${doc.id}'">
-    🛒 অর্ডার করুন
-  </button>
+<p style="cursor:pointer"
+onclick="location.href='product.html?id=${doc.id}'">
+${p.offerPrice
+  ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>`
+  : `৳ ${p.regularPrice}`}
+</p>
 
 </div>
 `;
 
   });
+
+categories.forEach(category => {
+    categoryButtons.innerHTML += `
+        <button onclick="filterProducts('${category}')">
+            ${category}
+        </button>
+    `;
+});
 
 }
 
