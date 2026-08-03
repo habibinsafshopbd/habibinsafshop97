@@ -94,8 +94,14 @@ ${p.name}
 <p style="cursor:pointer"
 onclick="location.href='product.html?id=${doc.id}'">
 ${p.offerPrice
-  ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>`
-  : `৳ ${p.regularPrice}`}
+? `
+<del>৳ ${p.regularPrice}</del><br>
+<b>৳ ${p.offerPrice}</b><br>
+<span style="color:red;font-size:14px;font-weight:bold;">
+${Math.round((1 - p.offerPrice / p.regularPrice) * 100)}% OFF
+</span>
+`
+: `৳ ${p.regularPrice}`}
 </p>
 
 </div>
