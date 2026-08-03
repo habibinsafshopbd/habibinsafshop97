@@ -143,7 +143,11 @@ querySnapshot.forEach((doc) => {
           ? `<del>৳ ${p.regularPrice}</del><br><b>৳ ${p.offerPrice}</b>`
           : `৳ ${p.regularPrice}`}
     </p>
-
+${p.offerPrice ? `
+    <p style="color:red;font-weight:bold;">
+        ${Math.round((1 - p.offerPrice / p.regularPrice) * 100)}%
+    </p>
+    ` : ""}
 </div>
 `;
   count++;
