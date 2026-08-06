@@ -164,7 +164,19 @@ cursor:pointer;
 <input type="number" id="quantity" value="1" min="1" placeholder="পরিমাণ">
 
 <!-- এখানেই বসবে ↓ -->
+<h3>মোট ওজন</h3>
 
+<select id="weight" onchange="calculateTotal()">
+    <option value="0.5">৫০০ গ্রাম পর্যন্ত</option>
+    <option value="1">১ কেজি পর্যন্ত</option>
+    <option value="2">২ কেজি পর্যন্ত</option>
+    <option value="3">৩ কেজি পর্যন্ত</option>
+    <option value="5">৫ কেজি পর্যন্ত</option>
+    <option value="10">১০ কেজি পর্যন্ত</option>
+</select>
+<p style="font-size:14px; color:#d35400; margin:5px 0;">
+⚠️ শুধু মধু, মধুময় বাদাম, খেজুর, কাজুবাদাম, কাঠবাদাম ও তেলের জন্য ওজন নির্বাচন করুন।
+</p>
 <h3>মোট দাম</h3>
 
 <p id="totalPrice">৳ 0</p>
@@ -173,15 +185,30 @@ cursor:pointer;
 
 <select id="deliveryCharge" onchange="calculateTotal()">
     <option value="70">নরসিংদী ভিতরে - ৳70</option>
-    <option value="130">নরসিংদী বাইরে - ৳130</option>
+    <option value="115">নরসিংদী বাইরে - ৳115</option>
+</select>
+<h3>পেমেন্ট মাধ্যম</h3>
+
+
+<select id="paymentMethod">
+    <option value="Cash on Delivery">ক্যাশ অন ডেলিভারি</option>
+    <option value="bKash">বিকাশ</option>
+    <option value="Nagad">নগদ</option>
+    <option value="Rocket">রকেট</option>
+    <option value="Bank">ব্যাংক একাউন্ট</option>
 </select>
 
+<div id="paymentInfo" style="margin-top:10px;color:green;font-weight:bold;"></div>
+<input
+  type="text"
+  id="senderLast4"
+  maxlength="4"
+  placeholder="টাকা পাঠানোর নম্বরের শেষ 4 সংখ্যা দিন">
 <h3>সর্বমোট</h3>
 
 <p id="grandTotal">৳ 0</p>
-
 <button id="confirmOrderBtn" class="orderBtn">
-✅ অর্ডার কনফার্ম করুন
+✅ অর্ডার কনফার্মকরুন
 </button>
 
 </div>
@@ -252,17 +279,27 @@ showImage(current+1);
 function calculateTotal(){
 
     const qty = Number(document.getElementById("quantity").value) || 1;
-
     const price = Number(data.offerPrice || data.regularPrice);
+    const weight = Number(document.getElementById("weight").value);
 
-    const delivery = Number(document.getElementById("deliveryCharge").value);
+    let delivery = 0;
+
+    if(document.getElementById("deliveryCharge").selectedIndex == 0){
+        delivery = 70 + ((weight * 2) - 1) * 20;
+        document.getElementById("deliveryCharge").options[0].text =
+        "নরসিংদী ভিতরে - ৳" + delivery;
+    }else{
+        delivery = 115 + ((weight * 2) - 1) * 20;
+        document.getElementById("deliveryCharge").options[1].text =
+        "নরসিংদী বাইরে - ৳" + delivery;
+    }
+
+    document.getElementById("deliveryCharge").value = delivery;
 
     const total = qty * price;
 
     document.getElementById("totalPrice").innerText = "৳ " + total;
-
     document.getElementById("grandTotal").innerText = "৳ " + (total + delivery);
-
 }
 if(productId){
 
@@ -301,6 +338,7 @@ calculateTotal();
 
 document.getElementById("quantity").oninput = calculateTotal;
 document.getElementById("deliveryCharge").onchange = calculateTotal;
+document.getElementById("weight").onchange = calculateTotal;
 
 window.calculateTotal = calculateTotal;
 
@@ -344,7 +382,7 @@ document.getElementById("colorOptions").innerHTML = html;
 
 }
 
-document.getElementById("orderBtn").addEventListener("click", function(){
+document.getElementById("orderBtn").addEventListener("click", function () {
 
     document.getElementById("orderForm").style.display = "block";
 
@@ -355,6 +393,26 @@ document.getElementById("orderBtn").addEventListener("click", function(){
 }
 
 }
+const paymentMethod = document.getElementById("paymentMethod");
+const paymentInfo = document.getElementById("paymentInfo");
+
+paymentMethod.onchange = function () {
+
+  if (this.value === "bKash") {
+    paymentInfo.innerHTML = "বিকাশ নম্বর: 01793795727";
+  } else if (this.value === "Nagad") {
+    paymentInfo.innerHTML = "নগদ নম্বর: 01793795727";
+  } else if (this.value === "Rocket") {
+    paymentInfo.innerHTML = "রকেট নম্বর: 01793795727";
+  } else if (this.value === "Bank") {
+    paymentInfo.innerHTML = "ব্যাংক একাউন্ট: 20507770227448420";
+  } else {
+    paymentInfo.innerHTML = "ক্যাশ অন ডেলিভারিতে অগ্রিম লাগবে না।";
+  }
+
+};
+
+paymentMethod.onchange();
 document.getElementById("confirmOrderBtn").onclick = async function () {
 
     const name = document.getElementById("customerName").value.trim();
@@ -366,7 +424,10 @@ document.getElementById("confirmOrderBtn").onclick = async function () {
     const size = document.querySelector('input[name="size"]:checked')?.value || "";
 
     const color = document.querySelector('input[name="color"]:checked')?.value || "";
-
+const paymentMethod =
+document.getElementById("paymentMethod").value;
+const senderLast4 =
+document.getElementById("senderLast4").value.trim();
     const total = document.getElementById("grandTotal").innerText;
 
     if (!name || !phone || !address) {
@@ -387,6 +448,8 @@ document.getElementById("confirmOrderBtn").onclick = async function () {
             customerName: name,
             customerPhone: phone,
             customerAddress: address,
+            paymentMethod: paymentMethod,
+            senderLast4: senderLast4,
             total: total,
             status: "Pending",
             createdAt: new Date()
