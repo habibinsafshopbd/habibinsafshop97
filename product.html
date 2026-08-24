@@ -191,7 +191,7 @@ cursor:pointer;
 <h3>ডেলিভারি চার্জ</h3>
 
 <select id="deliveryCharge" onchange="calculateTotal()">
-    <option value="70">নরসিংদী ভিতরে - ৳70</option>
+    <option value="60">নরসিংদী ভিতরে - ৳60</option>
     <option value="115">নরসিংদী বাইরে - ৳115</option>
 </select>
 <h3>পেমেন্ট মাধ্যম</h3>
@@ -294,9 +294,9 @@ function calculateTotal(){
     if(document.getElementById("deliveryCharge").selectedIndex == 0){
 
     if(weight === 0.5){
-        delivery = 70;
+        delivery = 60;
     } else {
-        delivery = 90 + (weight - 1) * 20;
+        delivery = 80 + (weight - 1) * 20;
     }
 
     document.getElementById("deliveryCharge").options[0].text =
