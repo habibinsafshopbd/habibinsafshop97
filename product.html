@@ -168,12 +168,19 @@ cursor:pointer;
 
 <select id="weight" onchange="calculateTotal()">
     <option value="0.5">৫০০ গ্রাম পর্যন্ত</option>
-    <option value="1">১ কেজি পর্যন্ত</option>
-    <option value="2">২ কেজি পর্যন্ত</option>
-    <option value="3">৩ কেজি পর্যন্ত</option>
-    <option value="5">৫ কেজি পর্যন্ত</option>
-    <option value="10">১০ কেজি পর্যন্ত</option>
+  <option value="1">১ কেজি পর্যন্ত</option>
+<option value="2">২ কেজি পর্যন্ত</option>
+<option value="3">৩ কেজি পর্যন্ত</option>
+<option value="4">৪ কেজি পর্যন্ত</option>
+<option value="5">৫ কেজি পর্যন্ত</option>
+<option value="6">৬ কেজি পর্যন্ত</option>
+<option value="7">৭ কেজি পর্যন্ত</option>
+<option value="8">৮ কেজি পর্যন্ত</option>
+<option value="9">৯ কেজি পর্যন্ত</option>
+<option value="10">১০ কেজি পর্যন্ত</option>
+
 </select>
+
 <p style="font-size:14px; color:#d35400; margin:5px 0;">
 ⚠️ শুধু মধু, মধুময় বাদাম, খেজুর, কাজুবাদাম, কাঠবাদাম ও তেলের জন্য ওজন নির্বাচন করুন।
 </p>
@@ -294,7 +301,6 @@ function calculateTotal(){
         "নরসিংদী বাইরে - ৳" + delivery;
     }
 
-    document.getElementById("deliveryCharge").value = delivery;
 
     const total = qty * price;
 
@@ -434,7 +440,15 @@ document.getElementById("senderLast4").value.trim();
         alert("সব তথ্য পূরণ করুন");
         return;
     }
+// পেমেন্ট করা হলে শেষ ৪ সংখ্যা বাধ্যতামূলক
+if (paymentMethod !== "Cash on Delivery") {
 
+    if (!/^\d{4}$/.test(senderLast4)) {
+        alert("টাকা পাঠানোর নম্বরের শেষ ৪ সংখ্যা দিন।");
+        return;
+    }
+
+}
     try {
 
         await addDoc(collection(db, "orders"), {
@@ -460,7 +474,7 @@ document.getElementById("senderLast4").value.trim();
     } catch (error) {
         alert("অর্ডার সংরক্ষণ করা যায়নি");
         console.error(error);
-    }
+   }
 
 };
 
@@ -468,5 +482,14 @@ window.showImage = showImage;;
 
 </script>
 
+</body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page title</title>
+</head>
+<body>
+    
 </body>
+</html>
 </html>
