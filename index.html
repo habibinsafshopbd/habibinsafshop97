@@ -10,6 +10,10 @@
 
 <body>
 
+<div id="splash">
+    <img src="IMG-20251105-WA0021.jpg" alt="Habib Insaf Shop">
+</div>
+
 <header>
 
     <button class="menu-btn" onclick="menuOpen()">☰</button>
@@ -21,7 +25,9 @@
         </h1>
     </div>
 
-    <img src="IMG-20251105-WA0021.jpg" alt="Habib Insaf Shop Logo" class="logo">
+    <img src="IMG-20251105-WA0021.jpg"
+         alt="Habib Insaf Shop Logo"
+         class="logo">
 
 </header>
 
@@ -153,5 +159,15 @@ ${p.offerPrice ? `
   count++;
 });
 </script>
+
+<script>
+document.body.classList.add("splash-active");
+
+setTimeout(function() {
+    document.getElementById("splash").style.display = "none";
+    document.body.classList.remove("splash-active");
+}, 2500);
+</script>
+
 </body>
 </html>
