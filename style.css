@@ -1,3 +1,22 @@
+#splash {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+#splash img {
+    width: 350px;
+    max-width: 80%;
+}
+
+body.splash-active {
+    overflow: hidden;
+}
+
 body{
     background: white;
     font-family: Arial, sans-serif;
@@ -221,7 +240,7 @@ p{
 }
 
 .product b{
-    color:#006B3C;
+    color:green;
     font-size:22px;
 }
 
