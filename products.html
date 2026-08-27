@@ -19,8 +19,12 @@
 
 </header>
 
-<h2>📦 আমাদের পণ্য</h2>
-
+<h2>পণ্য</h2>
+<!-- 🔍 পণ্য সার্চ -->
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="পণ্যের নাম লিখে খুঁজুন..." oninput="searchProducts()">
+    <span>🔍</span>
+</div>
 <div class="category-buttons" id="categoryButtons">
     <button onclick="filterProducts('all')">সব</button>
 </div>
@@ -35,6 +39,28 @@ function filterProducts(category){
         if(category==="all"){
             product.style.display="block";
         }else if(product.classList.contains(category)){
+            product.style.display="block";
+        }else{
+            product.style.display="none";
+        }
+
+    });
+
+}
+function searchProducts(){
+
+    let search =
+        document.getElementById("searchInput").value.toLowerCase();
+
+    let products =
+        document.querySelectorAll(".product");
+
+    products.forEach(function(product){
+
+        let name =
+            product.querySelector("h3").innerText.toLowerCase();
+
+        if(name.includes(search)){
             product.style.display="block";
         }else{
             product.style.display="none";
